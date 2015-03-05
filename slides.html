@@ -237,6 +237,8 @@ const ProductionsTable = React.createClass({
 
 - Properties are passed down to the component, and cannot be mutated.
 
+- Differentiate between a **Coordinator** component (stateful) and pure **UI** component (stateless).
+
 ---
 
 ```jsx
@@ -275,6 +277,18 @@ const ProductionsTable = React.createClass({
 class: center, middle
 
 # React vs Angular
+
+---
+
+# Angular Directives vs React Components
+
+- Components don't support two-way data binding
+
+- No string templates, just pure JavaScript
+
+- Components are much easier to understand
+
+  - No digest cycles, scopes, transclusion, etc.
 
 ---
 
