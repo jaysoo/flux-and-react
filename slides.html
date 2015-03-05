@@ -16,18 +16,284 @@ class: center, middle
 
 # Agenda
 
-1. Introduction to Flux and React
-1. MVC vs Flux
-1. React vs Angular
-1. Pros and Cons
+1. Introduction to Flux
+2. Flux vs MVC
+3. Introduction to React
+4. React vs Angular
+5. Pros and Cons of Flux and React
+6. Recommendations
 
-
-.footnote[.red[*] We'll be assessing Flux and React together, but their adoption can be independent.]
+.footnote[
+  .red[*] We'll assess Flux and React together, but their adoption can be independent.
+]
 ---
 
-# Quick note
+class: center, middle
 
-We'll be assessing Flux and React together, but their adoption can be independent.
+# Introduction to Flux
+
+---
+
+# What is Flux?
+
+- Architectural pattern for client applications
+
+- Unidirectional data flow
+
+- Basically **CQRS** (reads are separated from writes)
+
+
+.center[
+  ![flux data flow](./images/flux-diagram.png)
+]
+
+
+---
+
+# Stores
+
+- Read-only data; Transient state
+
+- Does not store domain models but provides a view of them
+
+- Cannot be affected by **Views**
+
+- Updates own state based on Actions
+
+
+```js
+  class JobProductionStore {
+    constructor(Dispatcher) {
+      this._productions = {};
+      Dispatcher.register('FINISHED_GOOD_PRODUCED', this.addProduction);
+    }
+    addProduction(payload) {
+      const { jobId, palletNumber, ... } = payload;
+      this._productions[jobId].push({
+        // ...
+      });
+    }
+    getProductions(jobId) {
+      return this._productions[jobId]; // This can be used by Views.
+    }
+  }
+```
+
+---
+
+# Actions
+
+- Think of them as **Domain Events**
+
+- Describe things that have happened in our domain
+
+  e.g. `FINISHED_GOOD_PRODUCED`, `TRAILER_SHIPPED`, `INVENTORY_CONSUMED`
+
+- Contains a payload that carry information about what happened
+
+  ```js
+    {
+      action_id: 'FINISHED_GOOD_PRODUCED',
+
+      payload: {
+        jobId: 777,
+        producedAt: '2015-01-01 13:00.000Z',
+        palletNumber: '999',
+        quantity: {
+          value: 50,
+          uom: 'cases'
+        }
+      }
+    }
+  ```
+
+---
+
+# Dispatcher
+
+- One **Dispatcher** for the application
+
+- All **Actions** are dispatched by the **Dispatcher**
+
+- Registered **Stores** can update their state from **Actions**
+
+---
+
+# Example
+
+.center[
+  ![flux-example](./images/flux-example.png)
+]
+
+---
+
+# Example Continued
+
+- We can create additional Stores such as `JobMetricsStore` that also updates on
+`FINISHED_GOOD_PRODUCED`.
+
+- We only need to write new projections to map **Actions** to **Store** states.
+
+---
+
+class: center, middle
+
+# Flux vs MVC
+
+---
+
+# Quick MVC Refresher
+
+.center[
+  ![mvc-diagram](./images/mvc-diagram.png)
+]
+
+---
+
+# Downsides of MVC on client-side
+
+- User interaction with a **View** can cause chain reaction in **Model** updates.
+
+- Any changes to **Model** behaviour may have unintended consequences for the **Views**.
+
+- Presenting data in a **View** that doesn't map to domain **Model** can be tricky.
+
+  - ViewModels, Presenters, etc.
+
+---
+
+class: center, middle
+
+# Introduction to React
+
+---
+
+# React Component
+
+- React components are the **Views** in Flux (or MVC).
+
+- The most basic React component is one with a `render()` method.
+
+```jsx
+const ProductionsTable = React.createClass({
+  render() {
+    return (
+      <table>
+        {
+          this.props.productions.map(p => (
+            <tr>
+              <td>{p.producedAt}</td>
+              <td>{p.palletNumber}</td>
+              <td>{p.lotCode}</td>
+              <td>{p.expiryDate}</td>
+              <td>{formatQuantity(p.quantity)}</td>
+            </tr>
+          ));
+        }
+      </table>
+    );
+  }
+});
+```
+
+---
+
+# JSX
+
+- React (optionally) uses a syntax extension of JavaScript called JSX.
+
+- JSX gets compiled to ES5, which is what runs in the browser.
+
+- It is pure JavaScript, so no need for helpers (Handlebars) or filters (Angular).
+
+    ```jsx
+      <div>
+        <h1>{I18n.s_('Productions')}</h1>
+        <ProductionsTable production={this.state.productions} />
+      </div>
+    ```
+
+
+---
+
+# The Virtual DOM
+
+- React components do not render directly into the DOM.
+
+- Components always do a full render.
+
+- React diffs the Virtual DOM with the Real DOM, and computes a minimal mutation
+  to update the latter.
+
+- This is how game engines work :)
+
+---
+
+# Components Continued
+
+- Components can have `states` and `props`.
+
+- States can mutate within the component.
+
+- Properties are passed down to the component, and cannot be mutated.
+
+---
+
+```jsx
+  // Stateful component
+  const Parent = React.createClass({
+    constructor(Dispatcher) {
+      Dispatcher.register('MESSAGES_LOADED', this.update);
+    }
+
+    update(messages) {
+      // This triggers render()
+      this.updateState({ messages: messages });
+    }
+
+    render() {
+      return (
+        {this.state.messages.map(msg => (
+          <Child message={msg}>
+        )}
+      );
+    }
+  });
+
+  // Stateless component
+  const Child = React.createClass({
+    render() {
+      return (
+        <p>{this.props.message}</p>
+      );
+    }
+  });
+```
+
+---
+
+class: center, middle
+
+# React vs Angular
+
+---
+
+class: center, middle
+
+# Pros and Cons
+
+---
+
+class: center, middle
+
+# Recommendations
+
+---
+
+class: center, middle
+
+# Let's discuss!
+
 
     </textarea>
     <script src="http://gnab.github.io/remark/downloads/remark-latest.min.js"></script>
