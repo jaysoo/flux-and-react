@@ -20,8 +20,8 @@ class: center, middle
 2. Flux vs MVC
 3. Introduction to React
 4. React vs Angular
-5. Pros and Cons of Flux and React
-6. Recommendations
+5. Recommendations
+6. Discussions
 
 .footnote[
   .red[*] We'll assess Flux and React together, but their adoption can be independent.
@@ -46,7 +46,6 @@ class: center, middle
 .center[
   ![flux data flow](./images/flux-diagram.png)
 ]
-
 
 ---
 
@@ -119,20 +118,32 @@ class: center, middle
 
 ---
 
-# Example
+class: center middle img-full-width
 
-.center[
-  ![flux-example](./images/flux-example.png)
-]
+![pfv](./images/pfv.png)
 
 ---
 
-# Example Continued
+class: center middle img-full-width
+
+![flux-example](./images/flux-example.png)
+
+---
+
+class: middle
 
 - We can create additional Stores such as `JobMetricsStore` that also updates on
 `FINISHED_GOOD_PRODUCED`.
 
 - We only need to write new projections to map **Actions** to **Store** states.
+
+.center[
+  ![flux](./images/flux-2.png)
+]
+
+.footnote[
+  .red[*] Notice we don't need to modify Job or Production models in any way.
+]
 
 ---
 
@@ -142,7 +153,9 @@ class: center, middle
 
 ---
 
-# Quick MVC Refresher
+class: center middle img-full-width
+
+# MVC Refresher
 
 .center[
   ![mvc-diagram](./images/mvc-diagram.png)
@@ -150,15 +163,23 @@ class: center, middle
 
 ---
 
-# Downsides of MVC on client-side
+# Main differences
 
-- User interaction with a **View** can cause chain reaction in **Model** updates.
+- **Model** in MVC is both read by **Views** and written to by **Controllers**
 
-- Any changes to **Model** behaviour may have unintended consequences for the **Views**.
+  - This can cause chaining of update events
 
-- Presenting data in a **View** that doesn't map to domain **Model** can be tricky.
+  - User interactions can ause unintended side-effects
 
-  - ViewModels, Presenters, etc.
+- In MVC, there are no good way to deal with data that does not map 1-to-1 to
+  **Models**
+
+  - There are ways to address this (ViewModels, Presenters, etc.)
+
+- **Models** fall outside of Flux, and **Views** read only from **Stores**
+
+- **Stores** only need to handle **Actions**, and are not necessarily coupled to
+  domain models
 
 ---
 
@@ -241,6 +262,8 @@ const ProductionsTable = React.createClass({
 
 ---
 
+class: middle
+
 ```jsx
   // Stateful component
   const Parent = React.createClass({
@@ -280,15 +303,35 @@ class: center, middle
 
 ---
 
-# Angular Directives vs React Components
+class: middle center img-full-width
 
-- Components don't support two-way data binding
+# Angular change detection
+
+![ng change detection](./images/onchange_watch.svg)
+
+---
+
+class: middle center img-full-width
+
+# React change detection
+
+![react change detection](./images/onchange_vdom_initial.svg)
+
+---
+
+- No **two-way data binding** in React
+
+- React Components are much simpler and easier to work with
+
+  - No digest cycles, scopes, transclusion, etc.
 
 - No string templates, just pure JavaScript
 
-- Components are much easier to understand
+  - This makes debugging easier
 
-  - No digest cycles, scopes, transclusion, etc.
+.img-full-width[
+![stacktrace](./images/stacktrace.png)
+]
 
 ---
 

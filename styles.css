@@ -111,3 +111,15 @@ code {
   float: right;
   padding-top: 1em;
 }
+
+.img-full-width img {
+  width: 100%;
+}
+
+.img-full-height img {
+  height: 100%;
+}
+
+.no-title {
+  padding-top: 7.6em;
+}
