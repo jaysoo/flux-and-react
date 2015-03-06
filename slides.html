@@ -38,13 +38,10 @@ class: center, middle
 
 - Architectural pattern for client applications
 
-- Unidirectional data flow
-
-- Basically **CQRS** (reads are separated from writes)
-
+- **Unidirectional** data flow where reads are separated from writes (**CQRS**)
 
 .center[
-  ![](./images/flux-diagram.png)
+  ![](./images/flux-architecture.svg)
 ]
 
 ---
@@ -118,6 +115,12 @@ class: center, middle
 
 ---
 
+class: middle center
+
+# Example using Prodcution Focus View
+
+---
+
 class: center middle img-full-width
 
 ![](./images/pfv.png)
@@ -126,23 +129,22 @@ class: center middle img-full-width
 
 class: center middle img-full-width
 
-![](./images/flux-example.png)
+![](./images/flux-1.svg)
 
 ---
 
 class: middle
 
-- We can create additional Stores such as `JobMetricsStore` that also updates on
-`FINISHED_GOOD_PRODUCED`.
+- New Stores (e.g. `JobMetricsStore`) can be added that also responds to `FINISHED_GOOD_PRODUCED`.
 
 - We only need to write new projections to map **Actions** to **Store** states.
 
 .center[
-  ![](./images/flux-2.png)
+  ![](./images/flux-2.svg)
 ]
 
 .footnote[
-  .red[*] Notice we don't need to modify Job or Production models in any way.
+  .red[*] Notice we don't need to modify Job or Production models.
 ]
 
 ---
@@ -158,7 +160,7 @@ class: center middle img-full-width
 # MVC Refresher
 
 .center[
-  ![](./images/mvc-diagram.png)
+  ![](./images/mvc-architecture.svg)
 ]
 
 ---
@@ -168,8 +170,6 @@ class: center middle img-full-width
 - **Model** in MVC is both read by **Views** and written to by **Controllers**
 
   - This can cause chaining of update events
-
-  - User interactions can ause unintended side-effects
 
 - In MVC, there are no good way to deal with data that does not map 1-to-1 to
   **Models**
@@ -255,20 +255,7 @@ const ProductionsTable = React.createClass({
 
 ---
 
-# The Virtual DOM
-
-- React components do not render directly into the DOM.
-
-- Components always do a full render.
-
-- React diffs the Virtual DOM with the Real DOM, and computes a minimal mutation
-  to update the latter.
-
-- This is how game engines work :)
-
----
-
-# Components Continued
+# State vs Props
 
 - Components can have `states` and `props`.
 
@@ -276,7 +263,7 @@ const ProductionsTable = React.createClass({
 
 - Properties are passed down to the component, and cannot be mutated.
 
-- Differentiate between a **Coordinator** component (stateful) and pure **UI** component (stateless).
+- Differentiate between a **Owner** component (stateful) and **UI/Ownee** component (stateless).
 
 ---
 
@@ -285,14 +272,14 @@ class: middle
 ```jsx
   // Stateful component
   const Parent = React.createClass({
-    constructor(Dispatcher) {
-      Dispatcher.register('MESSAGES_LOADED', this.update);
-    }
+    constructor(store) {
+      store.on('change', this.update);
+    },
 
     update(messages) {
       // This triggers render()
-      this.updateState({ messages: messages });
-    }
+      this.setState({ messages: messages });
+    },
 
     render() {
       return (
@@ -327,7 +314,7 @@ const Component = React.createClass({
   propTypes: {
     productions: array.isRequired,
     onProductionDeleted: func,
-    onProductionCancelled: func
+    onProductionUpdated: func
   },
 
   render() {
@@ -339,6 +326,21 @@ const handleDeletedProduction = () => // ...
 
 <Component production={[...]} onProductionDeleted={handleDeletedProduction()}>
 ```
+
+---
+
+# The Virtual DOM
+
+- An in-memory representation of the DOM (POJOs).
+
+- React components do not render directly into the DOM.
+
+- Components do full renders to virtual DOM.
+
+- React diffs the virtual DOM with the real DOM, and computes minimal mutations
+  to update the latter.
+
+- *This is how game engines work* :)
 
 ---
 
@@ -366,9 +368,9 @@ class: middle center img-full-width
 
 - No **two-way data binding** in React
 
-- React Components are much **simpler** and easier to work with
+- React Components are much **simpler**
 
-  - No digest cycles, scopes, transclusion, etc.
+  - No digest cycles, scopes, transclusion
 
 - No string templates, just pure JavaScript
 
@@ -418,10 +420,12 @@ class: middle center
 
 ---
 
-# Component architecture
+class: center
+
+Component architecture
 
 .img-full-height[
-  ![](./images/flux-react-architecture.png)
+  ![](./images/flux-react.svg)
 ]
 
 ---
