@@ -44,7 +44,7 @@ class: center, middle
 
 
 .center[
-  ![flux data flow](./images/flux-diagram.png)
+  ![](./images/flux-diagram.png)
 ]
 
 ---
@@ -120,13 +120,13 @@ class: center, middle
 
 class: center middle img-full-width
 
-![pfv](./images/pfv.png)
+![](./images/pfv.png)
 
 ---
 
 class: center middle img-full-width
 
-![flux-example](./images/flux-example.png)
+![](./images/flux-example.png)
 
 ---
 
@@ -138,7 +138,7 @@ class: middle
 - We only need to write new projections to map **Actions** to **Store** states.
 
 .center[
-  ![flux](./images/flux-2.png)
+  ![](./images/flux-2.png)
 ]
 
 .footnote[
@@ -158,7 +158,7 @@ class: center middle img-full-width
 # MVC Refresher
 
 .center[
-  ![mvc-diagram](./images/mvc-diagram.png)
+  ![](./images/mvc-diagram.png)
 ]
 
 ---
@@ -180,6 +180,24 @@ class: center middle img-full-width
 
 - **Stores** only need to handle **Actions**, and are not necessarily coupled to
   domain models
+
+---
+
+# Pros and Cons
+
+## Pros
+
+- Simpler data flow
+
+- Reads and writes can change at different rates
+
+- Mutations are more controlled, easier to write tests for
+
+## Cons
+
+- More boilerplate
+
+  - This is mitigated by different Flux implementations
 
 ---
 
@@ -297,6 +315,33 @@ class: middle
 
 ---
 
+# Proptypes
+
+Proptypes describe the API of a component. This is useful for documentation purposes
+and to reduce errors.
+
+```jsx
+const {array, func} = React.PropTypes;
+
+const Component = React.createClass({
+  propTypes: {
+    productions: array.isRequired,
+    onProductionDeleted: func,
+    onProductionCancelled: func
+  },
+
+  render() {
+  }
+});
+
+// usage
+const handleDeletedProduction = () => // ...
+
+<Component production={[...]} onProductionDeleted={handleDeletedProduction()}>
+```
+
+---
+
 class: center, middle
 
 # React vs Angular
@@ -307,7 +352,7 @@ class: middle center img-full-width
 
 # Angular change detection
 
-![ng change detection](./images/onchange_watch.svg)
+![](./images/onchange_watch.svg)
 
 ---
 
@@ -315,29 +360,69 @@ class: middle center img-full-width
 
 # React change detection
 
-![react change detection](./images/onchange_vdom_initial.svg)
+![](./images/onchange_vdom_initial.svg)
 
 ---
 
 - No **two-way data binding** in React
 
-- React Components are much simpler and easier to work with
+- React Components are much **simpler** and easier to work with
 
   - No digest cycles, scopes, transclusion, etc.
 
 - No string templates, just pure JavaScript
 
-  - This makes debugging easier
+  - This makes **debugging easier**
 
 .img-full-width[
-![stacktrace](./images/stacktrace.png)
+![](./images/stacktrace.png)
 ]
+
+---
+
+# Pros and Cons
+
+## Pros
+
+- Renders are simpler and close to server renders
+
+- React is moving towards ECMAScript standards, whereas Angular 2 requires TypeScript
+
+- Proptypes improve documentation and reduces errors
+
+## Cons
+
+- No two-way data binding
+
+- Have to learn JSX
+
+- Editor support for JSX may be poor
 
 ---
 
 class: center, middle
 
 # Recommendations
+
+---
+
+class: middle center
+
+## Trial Flux in **QCloud** and **PackManager**
+
+---
+
+class: middle center
+
+## Trial React in **QCloud**
+
+---
+
+# Component architecture
+
+.img-full-height[
+  ![](./images/flux-react-architecture.png)
+]
 
 ---
 
